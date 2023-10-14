@@ -1,0 +1,13 @@
+{
+  "name": "ws-test",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {},
+  "dependencies": {
+    "ws": "^8.14.1",
+    "zod": "^3.22.2"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.5"
+  }
+}
