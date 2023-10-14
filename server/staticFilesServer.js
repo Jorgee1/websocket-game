@@ -8,7 +8,7 @@ const server = createServer((req, res) => {
     const url = (req.url) ? req.url: '/'
     const file = (url !== '/') ? url: '/index.html'
     const path = join('client', file)
-
+    console.log(path)
     readFile(path, 'utf-8', (error, data) => {
         if (error) {
             res.writeHead(404)

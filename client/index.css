@@ -1,5 +1,6 @@
 * {
     margin: 0px;
+    padding: 0px;
     text-align: center;
 }
 
@@ -9,6 +10,10 @@ html {
 
     background-color: black;
     color: white;
+}
+
+h1 {
+    padding: 10px;
 }
 
 body {

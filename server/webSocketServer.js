@@ -1,17 +1,24 @@
 import { z } from 'zod'
-import { WebSocketServer } from 'ws'
+import { randomBytes } from 'crypto'
+import { WebSocketServer, WebSocket } from 'ws'
+/**
+ * @typedef {{id: string, socket: WebSocket}} Client
+ */
 
 
 
 /**
- * @readonly
- * @enum {string}
+ * @type {Client[]}
  */
-const messages = [
-    
-]
-
+const clients = []
 const server = new WebSocketServer({port: 8080})
+
+/**
+ * 
+ * @param {number} ms 
+ * @returns {Promise<void>}
+ */
+const sleep = async (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 /**
  * 
@@ -33,12 +40,29 @@ const parseMessage = (messageRaw) => {
 
 
 server.on('connection', socket => {
-    console.log('Someone just came')
+    const id = randomBytes(25).toString('base64')
+    clients.push({id, socket})
+
+    console.log(id, 'has come')
     socket.on('message', messageRaw => {
         const {message, payload} = parseMessage(messageRaw)
 
         console.log(message, payload)
     })
+    socket.on('close', () => {
+        const index = clients.findIndex((e) => e.id === id)
+        if (index >= 0) clients.splice(index, 1)
+        console.log(id, 'has exited')
+    })
+
+    
+    socket.on('pong', () => console.log('received pong'))
+    
+    setInterval(() => {
+        console.log('Sending ping')
+        socket.ping()
+    }, 10000)
+    
 })
 server.on('error', error => console.error(error))
 
