@@ -1,14 +1,30 @@
 import { createServer } from 'http'
 import { readFile } from 'fs'
-import { join } from 'path'
+
+const publicFolders = ['client', 'utils']
+
+const isURLinPublicFolder = (url, publicFolders) => {
+    for (const publicFolder of publicFolders) {
+        const regex = new RegExp(`^${publicFolder}/\\w+`)
+        const match = url.match(regex)
+        if (match) return true
+    }
+    return false
+}
 
 const port = 5173
 
 const server = createServer((req, res) => {
     const url = (req.url) ? req.url: '/'
-    const file = (url !== '/') ? url: '/index.html'
-    const path = join('client', file)
-    console.log(path)
+    const path = (url !== '/') ? url.replace(/^\//, ''): 'client/index.html'
+
+    console.log(req.socket.remoteAddress, path)
+    if (!isURLinPublicFolder(path, publicFolders)) {
+        res.writeHead(401)
+        res.end(`401 ${url}`)
+        return
+    }
+
     readFile(path, 'utf-8', (error, data) => {
         if (error) {
             res.writeHead(404)
@@ -16,9 +32,9 @@ const server = createServer((req, res) => {
             return
         }
 
-        if      (file.match(/.html$/)) res.writeHead(200, {'Content-Type': 'text/html'})
-        else if (file.match(/.js$/  )) res.writeHead(200, {'Content-Type': 'text/javascript'})
-        else if (file.match(/.css$/ )) res.writeHead(200, {'Content-Type': 'text/css'})
+        if      (path.match(/.html$/)) res.writeHead(200, {'Content-Type': 'text/html'})
+        else if (path.match(/.js$/  )) res.writeHead(200, {'Content-Type': 'text/javascript'})
+        else if (path.match(/.css$/ )) res.writeHead(200, {'Content-Type': 'text/css'})
 
         res.end(data)
     })

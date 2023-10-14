@@ -1,10 +1,5 @@
-/**
- * 
- * @param {number} ms 
- * @returns {Promise<void>}
- */
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-
+import { sleep } from '../utils/sleep.js'
+import { parseMessage } from '../utils/parseMessage.js'
 /**
  * 
  * @param {WebSocket} ws 
@@ -12,7 +7,11 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 const initWS = (ws) => {
     ws.addEventListener('open', () => {
         console.log('i have come')
-        ws.send('asd {}')
+        ws.send('getClients {}')
+    })
+    ws.addEventListener('message', (event) => {
+        const {message, payload} = parseMessage(event.data)
+        console.log(message, payload)
     })
     ws.addEventListener('error', (event) => {
         console.error(event)
