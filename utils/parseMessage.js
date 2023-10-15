@@ -3,7 +3,7 @@
  * @param {import('ws').RawData} messageRaw
  * @returns {{
  *  message: string
- *  payload: object
+ *  payload: unknown
  * }}
 */
 export const parseMessage = (messageRaw) => {

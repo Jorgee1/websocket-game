@@ -40,9 +40,23 @@ server.on('connection', socket => {
     socket.on('message', messageRaw => {
         const {message, payload} = parseMessage(messageRaw)
         if (message === 'getClients'){
-            const response = encodeMessage('getClientsResponse', clients.map(({id, rect}) => ({id, rect})))
+            const response = encodeMessage('getClientsResponse', {id, clients: clients.map(({id, rect}) => ({id, rect}))})
             console.log(response)
             socket.send(response)
+        } else if (message === 'positionUpdate') {
+            if(!payload) return
+            if (!(typeof payload === 'object')) return
+            if (!('x' in payload && 'y' in payload)) return
+            if (!(typeof payload.x === 'number' && typeof payload.y === 'number')) return
+            rect.x = payload.x
+            rect.y = payload.y
+
+            for (const client of clients) {
+                if (client.id === id) continue
+                client.socket.send(encodeMessage('positionUpdateFromServer', {
+                    id, position: {x: rect.x, y: rect.y}
+                }))
+            }
         }
         console.log(message, payload)
     })

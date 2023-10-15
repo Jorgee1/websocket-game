@@ -2,3 +2,5 @@
 'getClientsResponse'
 'clientNew'
 'clientRemoved'
+'positionUpdate'
+'positionUpdateFromServer'
