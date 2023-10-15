@@ -1,0 +1,4 @@
+'getClients'
+'getClientsResponse'
+'clientNew'
+'clientRemoved'
